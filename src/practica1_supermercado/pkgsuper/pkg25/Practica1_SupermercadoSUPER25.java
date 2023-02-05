@@ -13,6 +13,8 @@ public class Practica1_SupermercadoSUPER25 {
     
     static String[][] productos = new String[20][3];
     static String[][] cupones = new String[20][2];
+    static String[][] reporte = new String[100][2];
+    
     static Scanner entrada = new Scanner(System.in);
     static String usuario = "cajero_202202233";
     static String password = "ipc1_202202233";
@@ -301,11 +303,13 @@ public class Practica1_SupermercadoSUPER25 {
     }
     //FUNCION #4
     public static void venta(){
+        int opc2;
         String nameCl;
         String nit;
         System.out.println("Bienvenido cliente a Super-25, puede ordenar aquì");
         System.out.println("por favor, ingrese lo que se le solicita");
         System.out.println("Nombre del cliente: ");
+        entrada.nextLine();
         nameCl = entrada.nextLine();
         do{
             if(nameCl.equals("") || nameCl.trim().equals("")){
@@ -334,8 +338,124 @@ public class Practica1_SupermercadoSUPER25 {
         }else{
             nit = "C/F";
         }
-        System.out.println("Lista de productos Super-25");
-        listarProductos();
+        String[][] carrito = new String[100][3];
+        String nameProducto;
+        String cantidad;
+        int stockMax = 0;
+        float valor = 0;
+        do{
+            System.out.println("¿Què desea hacer?");
+            System.out.println("1. Agregar producto al carrito ");
+            System.out.println("2. cancelar compra");
+            if(carrito[0][0]!=null){
+                System.out.println("3. finalizar compra");
+            }
+            opcion = entrada.nextInt();
+            switch(opcion){
+                case 1:
+                    System.out.println("Lista de productos en existencia");
+                    listarProductos();
+                    System.out.println("Llena los datos solicitados");
+                    for(int f=0; f<99;f++){
+                        if(carrito[f][0] ==null){
+                            for(int c=0;c<3;c++){
+                                switch(c){
+                                    case 0:
+                                        boolean aprovacion = false;
+                                        do{
+                                        System.out.println("Producto para agregar: ");
+                                        entrada.nextLine();
+                                        nameProducto = entrada.nextLine();
+                                        do{
+                                            if(nameProducto.equals("") || nameProducto.trim().equals("")){
+                                            System.out.println("El nombre del producto no puede estar vacio");
+                                            System.out.println("Nombre del producto: ");
+                                            nameProducto = entrada.nextLine();
+                                            }
+                                        }while(nameProducto.equals("") || nameProducto.trim().equals(""));
+                                        for(int fp = 0; fp<20; fp++){
+                                            if(nameProducto.equals(productos[fp][0])){
+                                                stockMax = Integer.parseInt(productos[fp][2]);
+                                                valor = Float.parseFloat(productos[fp][1]);
+                                                fp = 19;
+                                                aprovacion = true;
+                                            }else{
+                                                aprovacion = false;
+                                            }
+                                        }
+                                        }while(aprovacion = false);
+                                        
+                                        carrito[f][c]= nameProducto;
+                                        System.out.println("producto agregado: " + carrito[f][c]);
+                                    break;
+                                    case 1:
+                                        do{
+                                        System.out.println("unidades del producto");                                        
+                                        cantidad = entrada.nextLine();
+                                        entrada.nextLine();
+                                        int cantp;
+                                            do{
+                                                if(isInteger(cantidad)){
+                                                    if(Integer.parseInt(cantidad)==0 || Integer.parseInt(cantidad) < 0 ){
+                                                    System.out.println("las unidades no puede ser 0 o menos, solo enteros");
+                                                    System.out.println("unidades del producto:");
+                                                    cantidad = entrada.nextLine();
+                                                    }                                        
+                                                }else{
+                                                    System.out.println("las unidades no puede ser 0 o menos, solo enteros");
+                                                    System.out.println("unidades del producto:");
+                                                    entrada.nextLine();
+                                                    cantidad = entrada.nextLine();
+                                                }
+                                            }while(isInteger(cantidad) == false || Integer.parseInt(cantidad) < 0 || Integer.parseInt(cantidad)==0);
+                                            cantp = Integer.parseInt(cantidad);
+                                            if(cantp > stockMax || cantp <= 0){
+                                                System.out.println("no se pueden solicitar 0 unidades o menos, no puede ser mayor al stock total");
+                                                aprovacion = false;
+                                            }else{
+                                                aprovacion = true;
+                                            }
+                                        }while(aprovacion = false);
+                                        carrito[f][c]= cantidad;                                        
+                                        carrito[f][c+1] = Float.toString(Integer.parseInt(cantidad)*valor);
+                                        System.out.println("Productos en el carrito");
+                                        System.out.println("No.   Producto     Cantidad   ");
+                                        for(int fc=0;fc<99;fc++){
+                                            if(carrito[fc][0] != null){
+                                                System.out.print((fc + 1) + "     ");
+                                                for(int cc=0;cc<3;cc++){
+                                                    System.out.print(carrito[fc][cc]+"      ");
+                                                }
+                                            System.out.println(" ");   
+                                            }
+                                        }
+                                        do{
+                                            System.out.println("¿Deseas continuar agregando productos?");
+                                            System.out.println("1. Si   2. No");
+                                            opc2 = entrada.nextInt();
+                                            switch(opc2){
+                                                case 1:
+                                                    break;
+                                                case 2:
+                                                    f = 99;
+                                                break;
+                                                default:
+                                                    System.out.println("opcion no valida");
+                                            }
+                                        }while(opc2 < 1 || opc2 > 2);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 2:
+                    break;
+                default:
+                    System.out.println("swtich bugueado");
+                    break;
+            }
+        }while(opcion == 1);
         //FALTA SOLICITAR AL CLIENTE QUE PRODUCTOS COMPRARA, TOTAL COMPRA, DESCUENTO, FACTURA        
     }
     
@@ -344,9 +464,9 @@ public class Practica1_SupermercadoSUPER25 {
         for(int fila = 0; fila<20; fila++ ){
             if(productos[fila][0] != null){
                 System.out.println("No.-----Producto-----Precio-----Unidades");
-                System.out.print((fila + 1) + " ");
+                System.out.print((fila + 1) + "         ");
             for(int columna = 0; columna<3; columna++){
-                System.out.print(productos[fila][columna] + "      ");
+                System.out.print(productos[fila][columna] + "         ");
             }
             System.out.println(" ");
             }                        
