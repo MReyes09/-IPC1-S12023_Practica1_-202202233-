@@ -14,6 +14,7 @@ public class Practica1_SupermercadoSUPER25 {
     static String[][] productos = new String[20][3];
     static String[][] cupones = new String[20][2];
     static String[][] reporte = new String[100][2];
+    static String[][] carrito = new String[100][4];
     
     static Scanner entrada = new Scanner(System.in);
     static String usuario = "cajero_202202233";
@@ -272,7 +273,7 @@ public class Practica1_SupermercadoSUPER25 {
                                         System.out.println(cupones[fila][0]+ " " + cupones[fila][1]);
                                         int opc2;
                                     do{
-                                        System.out.println("¿Deseas continuar agregando productos?");
+                                        System.out.println("¿Deseas continuar agregando cupones?");
                                         System.out.println("1. Si   2. No");
                                         opc2 = entrada.nextInt();
                                         switch(opc2){
@@ -338,23 +339,24 @@ public class Practica1_SupermercadoSUPER25 {
         }else{
             nit = "C/F";
         }
-        String[][] carrito = new String[100][3];
         String nameProducto;
         String cantidad;
         int stockMax = 0;
         float valor = 0;
+        float subtotal = 0;
+        float total = 0;
+        String codigo;
         do{
             System.out.println("¿Què desea hacer?");
             System.out.println("1. Agregar producto al carrito ");
             System.out.println("2. cancelar compra");
             if(carrito[0][0]!=null){
-                System.out.println("3. finalizar compra");
+                System.out.println("3. finalizar compra (factura)");
             }
             opcion = entrada.nextInt();
             switch(opcion){
                 case 1:
                     System.out.println("Lista de productos en existencia");
-                    listarProductos();
                     System.out.println("Llena los datos solicitados");
                     for(int f=0; f<99;f++){
                         if(carrito[f][0] ==null){
@@ -363,6 +365,7 @@ public class Practica1_SupermercadoSUPER25 {
                                     case 0:
                                         boolean aprovacion = false;
                                         do{
+                                        listarProductos();
                                         System.out.println("Producto para agregar: ");
                                         entrada.nextLine();
                                         nameProducto = entrada.nextLine();
@@ -387,8 +390,9 @@ public class Practica1_SupermercadoSUPER25 {
                                         
                                         carrito[f][c]= nameProducto;
                                         System.out.println("producto agregado: " + carrito[f][c]);
+                                        carrito[f][c+1]= Float.toString(valor);
                                     break;
-                                    case 1:
+                                    case 2:
                                         do{
                                         System.out.println("unidades del producto");                                        
                                         cantidad = entrada.nextLine();
@@ -419,12 +423,12 @@ public class Practica1_SupermercadoSUPER25 {
                                         carrito[f][c]= cantidad;                                        
                                         carrito[f][c+1] = Float.toString(Integer.parseInt(cantidad)*valor);
                                         System.out.println("Productos en el carrito");
-                                        System.out.println("No.   Producto     Cantidad   ");
+                                        System.out.println("No.   Producto       C/U       Unidades      Total");
                                         for(int fc=0;fc<99;fc++){
                                             if(carrito[fc][0] != null){
                                                 System.out.print((fc + 1) + "     ");
-                                                for(int cc=0;cc<3;cc++){
-                                                    System.out.print(carrito[fc][cc]+"      ");
+                                                for(int cc=0;cc<4;cc++){
+                                                    System.out.print(carrito[fc][cc]+"            ");
                                                 }
                                             System.out.println(" ");   
                                             }
@@ -450,6 +454,60 @@ public class Practica1_SupermercadoSUPER25 {
                     }
                     break;
                 case 2:
+                    for(int f=0;f<100;f++){
+                        for(int c=0; f<3;f++){
+                        carrito[f][c]=null;
+                        }
+                    }
+                    System.out.println("Los productos contenidos en el carrito an sido eliminados");
+                    break;
+                case 3:
+                    for(int f=0;f<100;f++){
+                        if(carrito[f][0]!=null){
+                            subtotal = subtotal + Float.parseFloat(carrito[f][3]);
+                        }
+                    }
+                    System.out.println("Total a pagar: "+subtotal);
+                        System.out.println("El cliente posee un codigo de descuento");
+                        System.out.println("1. Si   2. No");
+                        opc2 = entrada.nextInt();
+                        switch(opc2){
+                            case 1:
+                                float porcentaje=0;
+                                System.out.println("Codigo de descuento: ");
+                                codigo = entrada.nextLine();
+                                do{
+                                    if(codigo.equals("") || codigo.trim().equals("")){
+                                        System.out.println("El codigo no puede estar vacio");
+                                        System.out.println("Codigo de descuento: ");
+                                        codigo = entrada.nextLine();
+                                    }else if(codigo.length() != 4){
+                                        System.out.println("El codigo no puede excederse de 4 caracteres o tener menos");
+                                        System.out.println("Codigo de descuento: ");
+                                        codigo = entrada.nextLine();
+                                    }else if(codigo.length() ==4){
+                                        for(int filaP = 0; filaP < 20; filaP++){
+                                            if(cupones[filaP][0] == null){
+                                                        
+                                            }else if(cupones[filaP][0].equals(codigo)){
+                                                porcentaje = Float.parseFloat(cupones[filaP][1]);
+                                                total = subtotal*(porcentaje/100);
+                                            }
+                                       }                                                
+                                   }                                          
+                                }while(codigo.length() != 4);  
+                                generarFactura(nameCl, nit, subtotal, total, porcentaje);
+                                limpiarCarrito();                                
+                                break;
+                            case 2:
+                                total = subtotal;
+                                porcentaje = 0;
+                                generarFactura(nameCl, nit, subtotal, total, porcentaje);
+                                break;
+                            default:
+                                    System.out.println("opcion no valida");
+                                break;
+                        }
                     break;
                 default:
                     System.out.println("swtich bugueado");
@@ -469,7 +527,7 @@ public class Practica1_SupermercadoSUPER25 {
                 System.out.print(productos[fila][columna] + "         ");
             }
             System.out.println(" ");
-            }                        
+            }
         }
         System.out.println("----------------------");
         System.out.println(" ");
@@ -491,4 +549,36 @@ public class Practica1_SupermercadoSUPER25 {
         System.out.println(" ");
     }
     //FIN DE FUNCIONES DE LISTAR
+    
+    public static void generarFactura(String nomCliente, String NIT, float subTotal, float Total, float porcentaje){
+        System.out.println("        Empresa SUPER-25");
+        System.out.println("Atendido por " + usuario);
+        System.out.println("Factura emitida a nombre de " + nomCliente);
+        System.out.println("Con NIT: " + NIT);
+        System.out.println("Facura emitida en el dia: " + "10/02/2022");
+        System.out.println("Productos en el carrito");
+        System.out.println("No.   Producto       C/U       Unidades      Total");
+            for(int fc=0;fc<99;fc++){
+                if(carrito[fc][0] != null){
+                    System.out.print((fc + 1) + "     ");
+                    for(int cc=0;cc<4;cc++){
+                        System.out.print(carrito[fc][cc]+"            ");
+                    }
+                    System.out.println(" ");   
+                }
+            }
+        System.out.println("Subtotal: " + subTotal);
+        if(porcentaje != 0){
+            System.out.println("porcentaje de descuento: " + porcentaje);
+        }
+        System.out.println("Total: " + Total);
+    }
+    
+    public static void limpiarCarrito(){
+        for(int f=0;f<100;f++){
+            for(int c=0; f<3;f++){
+                carrito[f][c]=null;
+            }
+        }
+    }
 }
