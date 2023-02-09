@@ -403,7 +403,6 @@ public class Practica1_SupermercadoSUPER25 {
                                         do{
                                         System.out.println("unidades del producto");                                        
                                         cantidad = entrada.nextLine();
-                                        entrada.nextLine();
                                         int cantp;
                                             do{
                                                 if(isInteger(cantidad)){
@@ -562,7 +561,7 @@ public class Practica1_SupermercadoSUPER25 {
     public static void generarFactura(String nomCliente, String NIT, float subTotal, float Total, float percent){
         System.out.println("        Empresa SUPER-25");
         System.out.println("Atendido por " + usuario);
-        System.out.println("Factura emitida a nombre de " + nomCliente);
+        System.out.println("Factura emitida a nombre de Matthew Reyes");
         System.out.println("Con NIT: " + NIT);
         System.out.println("Facura emitida en el dia: " + "10/02/2022");
         System.out.println("Productos en el carrito");
@@ -591,9 +590,7 @@ public class Practica1_SupermercadoSUPER25 {
                         fp = 99;
                     }else if(reporte[fp][0].equals(carrito[f][0])){
                         int x = Integer.parseInt(reporte[fp][1]);
-                        System.out.println("reporte antes de actualizar: " + reporte[fp][1]);
                         reporte[fp][1] = Integer.toString(x + Integer.parseInt(carrito[f][2]));
-                        System.out.println("reporte despues de actualizar: " + reporte[fp][1]);
                         fp = 99;
                     }
                 }
