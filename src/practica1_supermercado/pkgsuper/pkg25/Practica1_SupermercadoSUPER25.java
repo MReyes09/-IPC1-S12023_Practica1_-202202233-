@@ -15,7 +15,6 @@ public class Practica1_SupermercadoSUPER25 {
     static String[][] cupones = new String[20][2];
     static String[][] reporte = new String[100][2];
     static String[][] carrito = new String[100][4];
-    
     static Scanner entrada = new Scanner(System.in);
     static String usuario = "cajero_202202233";
     static String password = "ipc1_202202233";
@@ -28,17 +27,16 @@ public class Practica1_SupermercadoSUPER25 {
         System.out.println("Bienvenido a Super-25");
         //Validacion de datos
         //PASO 1 INICIO
-        /*
         do{
+            System.out.println(" ");
             System.out.println("Por favor, ingresar el usuario");
             user = entrada.nextLine();
+            System.out.println(" ");
             System.out.println("Por favor, ingresar la contraseña");
             pass = entrada.nextLine();
-            valor = validacionCajero(user,pass);
-        }while(valor = false);
-        */
+        }while(validacionCajero(user,pass));
         //PASO 1 FINALIZADO
-        //PASO 2 INICIO        
+        //PASO 2 INICIO
         do{
             System.out.println("-----MENU PRINCIPAL-----");
             System.out.println("¿Què deseas hacer?");
@@ -91,10 +89,10 @@ public class Practica1_SupermercadoSUPER25 {
         if(cajero.equals(usuario) && contra.equals(password)){
             System.out.println("datos validos");
             System.out.println("Bienvenido usuario, puedes comenzar tu orden");
-            return true;
+            return false;
         }else{
             System.out.println("datos invalidos");
-            return false;
+            return true;
         }        
     }
     //FUNCION #2
@@ -121,13 +119,21 @@ public class Practica1_SupermercadoSUPER25 {
                                 switch(columna){
                                 case 0:
                                     entrada.nextLine();
-                                    System.out.println("Nombre del producto: ");
-                                    nameProducto = entrada.nextLine();
                                     do{
+                                        System.out.println("Nombre del producto: ");
+                                        nameProducto = entrada.nextLine();
                                         if(nameProducto.equals("") || nameProducto.trim().equals("")){
                                         System.out.println("El nombre del producto no puede estar vacio");
                                         System.out.println("Nombre del producto: ");
                                         nameProducto = entrada.nextLine();
+                                        }else{
+                                            for(int f=0;f<20; f++){
+                                                if(nameProducto.equals(productos[f][0])){
+                                                   System.out.println("Este producto ya es existente");
+                                                   f = 19;
+                                                   nameProducto = "";
+                                               }
+                                            }
                                         }
                                     }while(nameProducto.equals("") || nameProducto.trim().equals(""));
                                     productos[fila][columna] = nameProducto;
@@ -265,11 +271,11 @@ public class Practica1_SupermercadoSUPER25 {
                                         System.out.println("descuento mayor a 0 y menor a 100");
                                         descuento = entrada.nextFloat();
                                         do{
-                                            if(descuento < 0 || descuento > 100 || descuento == 0){
+                                            if(descuento <= 0 || descuento >= 100){
                                                 System.out.println("descuento mayor a 0 y menor a 100");
                                                 descuento = entrada.nextFloat();
                                             }
-                                        }while(descuento < 0 || descuento > 100 || descuento == 0);
+                                        }while(descuento <= 0 || descuento >= 100);
                                         cupones[fila][columna] = Float.toString(descuento);
                                         System.out.println(cupones[fila][0]+ " " + cupones[fila][1]);
                                         int opc2;
@@ -541,7 +547,7 @@ public class Practica1_SupermercadoSUPER25 {
         for(int fila = 0; fila<20; fila++ ){
             if(cupones[fila][0] != null){
                 System.out.println("No.-----CODIGO-----DESCUENTO (%)");
-                System.out.print((fila + 1) + "    ");
+                System.out.print((fila + 1) + "        ");
                 for(int columna = 0; columna<2; columna++){
                     System.out.print(cupones[fila][columna] + "        ");
                 }
